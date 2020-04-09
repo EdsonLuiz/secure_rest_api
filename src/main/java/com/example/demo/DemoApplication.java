@@ -1,22 +1,32 @@
 package com.example.demo;
 
-import java.util.List;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
 @SpringBootApplication
-public class DemoApplication {
+public class DemoApplication extends WebSecurityConfigurerAdapter {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
+	}
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+			.authorizeRequests(a -> a
+						.mvcMatchers(HttpMethod.GET, "/api/todos").hasAuthority("READ")
+						.anyRequest().hasAuthority("WRITE")
+					).httpBasic();
+		http.cors().disable();
+		http.csrf().disable();
 	}
 	
 	@Bean
@@ -26,11 +36,6 @@ public class DemoApplication {
 
 	@Bean
 	UserDetailsService userDetailsService(javax.sql.DataSource dataSource) {
-		return new JdbcUserDetailsManager(dataSource) {
-			@Override
-			protected List<GrantedAuthority> loadUserAuthorities(String username) {
-				return AuthorityUtils.createAuthorityList("ROLE_USER");
-			}
-		};
+		return new JdbcUserDetailsManager(dataSource);
 	}
 }

@@ -1,5 +1,6 @@
 package com.example.demo.models.repositories;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;
@@ -9,5 +10,6 @@ import com.example.demo.models.entities.User;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, UUID> {
-
+	List<User> findByUsername(String username);
+	
 }

@@ -1,10 +1,9 @@
 package com.example.demo.models.entities;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
 @Entity(name = "users")
 public class User {
@@ -16,18 +15,18 @@ public class User {
 	String username;
 	String password;
 	Boolean enabled = true;
-	
-	
+
+	@OneToMany(cascade = CascadeType.ALL)
+	List<UserAuthority> authorities = new ArrayList<>();
+
 	public User() {
 	}
-	
-	
+
 	public User(UUID id, String username, String password) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
 	}
-
 
 
 	public UUID getId() {
@@ -62,4 +61,15 @@ public class User {
 		this.enabled = enabled;
 	}
 
+	public List<UserAuthority> getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(List<UserAuthority> authorities) {
+		this.authorities = authorities;
+	}
+
+	public void addAuthority(String authority) {
+		this.authorities.add(new UserAuthority(this, authority));
+	}
 }

@@ -30,7 +30,10 @@ public class DemoApplicationInitializer implements SmartInitializingSingleton {
 		UUID carolId = UUID.fromString("36505807-d180-4917-92db-a5515f229d67");
 		
 		User edson = new User(edsonId, "edson", this.passwordEncoder.encode("12345"));
+		edson.addAuthority("READ");
+		edson.addAuthority("WRITE");
 		User carol = new User(carolId, "carol", this.passwordEncoder.encode("12345"));
+		carol.addAuthority("READ");
 		this.users.save(edson);
 		this.users.save(carol);
 	}
